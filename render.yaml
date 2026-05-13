@@ -1,0 +1,29 @@
+# Render blueprint. Connect this repo on Render -> "New Blueprint" and it will
+# pick up this file automatically. Free tier works for testing; the SQLite file
+# lives on the instance disk and resets on each deploy / cold start. To keep
+# data across restarts, upgrade to a paid plan and uncomment the `disk:` block.
+
+services:
+  - type: web
+    name: eqsl
+    runtime: node
+    plan: free
+    region: singapore        # closest to MY users; change if you prefer
+    buildCommand: npm ci
+    startCommand: node server.js
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NODE_ENV
+        value: production
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: DB_PATH
+        value: /opt/render/project/src/data.sqlite
+    # Persistent disk (paid plans only). Uncomment to keep data across deploys:
+    # disk:
+    #   name: eqsl-data
+    #   mountPath: /var/data
+    #   sizeGB: 1
+    # And then change DB_PATH above to /var/data/data.sqlite

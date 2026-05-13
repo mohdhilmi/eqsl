@@ -13,19 +13,31 @@ const app = express();
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+// Render (and most PaaS) terminates TLS at a proxy. Trust it so secure cookies
+// and req.protocol behave correctly behind the proxy.
+app.set('trust proxy', 1);
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 
+const isProd = process.env.NODE_ENV === 'production';
 app.use(
   session({
     secret: process.env.SESSION_SECRET || 'eqsl-dev-secret',
     resave: false,
     saveUninitialized: false,
-    cookie: { httpOnly: true, sameSite: 'lax' },
+    cookie: {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: isProd, // require HTTPS in prod (Render serves HTTPS)
+    },
   })
 );
+
+// Lightweight healthcheck for Render.
+app.get('/healthz', (req, res) => res.type('text').send('ok'));
 
 // Make common data available to every view.
 app.use((req, res, next) => {

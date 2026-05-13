@@ -1,0 +1,26 @@
+<%- include('../partials/header') %>
+<h1>Admin Dashboard</h1>
+
+<section class="cards">
+  <div class="card"><h3><%= counts.participants %></h3><p>Participants</p></div>
+  <div class="card"><h3><%= counts.qualifying %></h3><p>Qualifying Attempts</p></div>
+  <div class="card"><h3><%= counts.final %></h3><p>Final Attempts</p></div>
+</section>
+
+<h2>Participants per Category</h2>
+<table class="results">
+  <thead><tr><th>Category</th><th>Participants</th></tr></thead>
+  <tbody>
+    <% perCategory.forEach(r => { %>
+      <tr><td><%= r.name %></td><td><%= r.participants %></td></tr>
+    <% }) %>
+  </tbody>
+</table>
+
+<h2>Quick Actions</h2>
+<div class="actions">
+  <a class="btn" href="/admin/participants">Manage Participants</a>
+  <a class="btn" href="/admin/timings">Enter Timings</a>
+  <a class="btn" href="/admin/results">View Rankings</a>
+</div>
+<%- include('../partials/footer') %>

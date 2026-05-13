@@ -1,0 +1,36 @@
+<%- include('partials/header') %>
+<section class="hero">
+  <h1>Sports Stacking Competition</h1>
+  <p>Online registration, qualifying & final round timings, automatic ranking, and printable result slips.</p>
+  <div class="cta">
+    <a class="btn primary" href="/register">Register a Participant</a>
+    <a class="btn"         href="/results">View Results</a>
+  </div>
+</section>
+
+<section class="cards">
+  <div class="card">
+    <h3><%= stats.participants %></h3><p>Participants</p>
+  </div>
+  <div class="card">
+    <h3><%= stats.attempts %></h3><p>Recorded Attempts</p>
+  </div>
+  <div class="card">
+    <h3><%= categories.length %></h3><p>Categories</p>
+  </div>
+  <div class="card">
+    <h3><%= disciplines.length %></h3><p>Disciplines</p>
+  </div>
+</section>
+
+<section>
+  <h2>Categories</h2>
+  <ul>
+    <% categories.forEach(c => { %><li><%= c.name %></li><% }) %>
+  </ul>
+  <h2>Disciplines</h2>
+  <ul>
+    <% disciplines.forEach(d => { %><li><%= d.name %></li><% }) %>
+  </ul>
+</section>
+<%- include('partials/footer') %>

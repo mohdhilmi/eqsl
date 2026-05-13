@@ -1,0 +1,10 @@
+<%- include('../partials/header') %>
+<h1>Admin Login</h1>
+<% if (error) { %><div class="flash error"><%= error %></div><% } %>
+<form method="post" action="/admin/login" class="form narrow">
+  <label>Username <input name="username" required autofocus></label>
+  <label>Password <input name="password" type="password" required></label>
+  <button class="btn primary" type="submit">Login</button>
+</form>
+<p class="hint">Default seeded admin: <code>admin</code> / <code>admin123</code></p>
+<%- include('../partials/footer') %>

@@ -1,0 +1,50 @@
+<%- include('partials/header') %>
+<h1>Results</h1>
+<%- include('partials/filter-form') %>
+
+<% if (categoryId && disciplineId) { %>
+  <h2>
+    <%= categoryName %> &middot; <%= disciplineName %> &middot;
+    <%= round === 'final' ? 'Final Round (Top 3)' : 'Qualifying Round' %>
+  </h2>
+
+  <% if (!rows.length) { %>
+    <p>No results recorded yet.</p>
+  <% } else { %>
+    <table class="results">
+      <thead>
+        <tr>
+          <th>Rank</th><th>Bib</th><th>Name</th><th>Gender</th><th>School</th>
+          <th>A1</th><th>A2</th><th>A3</th><th>Best</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% rows.forEach(r => { %>
+          <tr class="<%= round === 'final' && r.rank === 1 ? 'gold' : (round === 'final' && r.rank === 2 ? 'silver' : (round === 'final' && r.rank === 3 ? 'bronze' : '')) %>">
+            <td>
+              <%= r.rank ?? 'DNF' %>
+              <% if (round === 'final' && r.rank === 1) { %> Champion<% }
+                 else if (round === 'final' && r.rank === 2) { %> 1st R-Up<% }
+                 else if (round === 'final' && r.rank === 3) { %> 2nd R-Up<% } %>
+            </td>
+            <td><%= r.bib_no || '' %></td>
+            <td><%= r.full_name %></td>
+            <td><%= r.gender || '' %></td>
+            <td><%= r.school || '' %></td>
+            <td><%= formatMs(r.attempts[0]) %></td>
+            <td><%= formatMs(r.attempts[1]) %></td>
+            <td><%= formatMs(r.attempts[2]) %></td>
+            <td><strong><%= formatMs(r.best_ms) %></strong></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+
+    <% if (round === 'qualifying' && allRows.length > 5) { %>
+      <p class="hint">Top 5 qualify for the Final Round.</p>
+    <% } %>
+  <% } %>
+<% } else { %>
+  <p>Select a category and discipline to view results.</p>
+<% } %>
+<%- include('partials/footer') %>

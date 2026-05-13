@@ -1,0 +1,41 @@
+<%- include('../partials/header') %>
+<h1>Enter Timings</h1>
+<%- include('../partials/filter-form') %>
+
+<% if (categoryId && disciplineId) { %>
+  <% if (round === 'final' && participants.length === 0) { %>
+    <p>No qualifiers yet for this category &amp; discipline. Record qualifying timings first.</p>
+  <% } else if (participants.length === 0) { %>
+    <p>No participants registered for this category yet.</p>
+  <% } else { %>
+    <p class="hint">Enter time as <code>seconds.cs</code> (e.g. <code>5.42</code>) or leave blank for DNF. Best time is computed automatically.</p>
+    <form method="post" action="/admin/timings">
+      <input type="hidden" name="category_id"   value="<%= categoryId %>">
+      <input type="hidden" name="discipline_id" value="<%= disciplineId %>">
+      <input type="hidden" name="round"         value="<%= round %>">
+      <table class="results">
+        <thead><tr>
+          <th>Bib</th><th>Name</th><th>A1</th><th>A2</th><th>A3</th>
+        </tr></thead>
+        <tbody>
+          <% participants.forEach(p => { %>
+            <tr>
+              <td><%= p.bib_no || '' %></td>
+              <td><%= p.full_name %></td>
+              <% for (let n = 1; n <= 3; n++) {
+                   const ms = (existing[p.id] || {})[n];
+                   const display = ms == null ? '' : (ms / 1000).toFixed(2);
+              %>
+                <td><input name="times[<%= p.id %>][<%= n %>]" value="<%= display %>" placeholder="--" inputmode="decimal" style="width: 6em"></td>
+              <% } %>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      <button class="btn primary" type="submit">Save Timings</button>
+    </form>
+  <% } %>
+<% } else { %>
+  <p>Pick a category, discipline, and round to enter timings.</p>
+<% } %>
+<%- include('../partials/footer') %>

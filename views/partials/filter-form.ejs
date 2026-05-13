@@ -1,0 +1,25 @@
+<form method="get" class="filter-form">
+  <label>Category
+    <select name="category_id" required>
+      <option value="">-- choose --</option>
+      <% categories.forEach(c => { %>
+        <option value="<%= c.id %>" <%= categoryId == c.id ? 'selected' : '' %>><%= c.name %></option>
+      <% }) %>
+    </select>
+  </label>
+  <label>Discipline
+    <select name="discipline_id" required>
+      <option value="">-- choose --</option>
+      <% disciplines.forEach(d => { %>
+        <option value="<%= d.id %>" <%= disciplineId == d.id ? 'selected' : '' %>><%= d.name %></option>
+      <% }) %>
+    </select>
+  </label>
+  <label>Round
+    <select name="round">
+      <option value="qualifying" <%= round === 'qualifying' ? 'selected' : '' %>>Qualifying</option>
+      <option value="final"      <%= round === 'final'      ? 'selected' : '' %>>Final</option>
+    </select>
+  </label>
+  <button type="submit">Go</button>
+</form>

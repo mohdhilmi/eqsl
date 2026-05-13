@@ -1,0 +1,56 @@
+<%- include('../partials/header') %>
+<h1>Participants</h1>
+
+<form method="get" class="filter-form">
+  <label>Filter by category
+    <select name="category_id" onchange="this.form.submit()">
+      <option value="">All</option>
+      <% categories.forEach(c => { %>
+        <option value="<%= c.id %>" <%= filterCategory == c.id ? 'selected' : '' %>><%= c.name %></option>
+      <% }) %>
+    </select>
+  </label>
+</form>
+
+<h2>Add Participant</h2>
+<form method="post" action="/admin/participants" class="form inline-form">
+  <input name="full_name" placeholder="Full name" required>
+  <input name="bib_no" placeholder="Bib">
+  <select name="gender">
+    <option value="">Gender</option>
+    <option value="L">L</option><option value="P">P</option>
+  </select>
+  <input name="school" placeholder="School">
+  <select name="category_id" required>
+    <option value="">Category</option>
+    <% categories.forEach(c => { %>
+      <option value="<%= c.id %>"><%= c.name %></option>
+    <% }) %>
+  </select>
+  <button class="btn primary" type="submit">Add</button>
+</form>
+
+<table class="results">
+  <thead><tr>
+    <th>ID</th><th>Bib</th><th>Name</th><th>Gender</th><th>School</th><th>Category</th><th></th>
+  </tr></thead>
+  <tbody>
+    <% participants.forEach(p => { %>
+      <tr>
+        <td><%= p.id %></td>
+        <td><%= p.bib_no || '' %></td>
+        <td><%= p.full_name %></td>
+        <td><%= p.gender || '' %></td>
+        <td><%= p.school || '' %></td>
+        <td><%= p.category_name %></td>
+        <td>
+          <form method="post" action="/admin/participants/<%= p.id %>?_method=DELETE"
+                onsubmit="return confirm('Delete this participant and all attempts?');">
+            <button class="link danger" type="submit">delete</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+<%- include('../partials/footer') %>

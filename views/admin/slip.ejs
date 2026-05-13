@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Result Slip — <%= categoryName %> — <%= disciplineName %> — <%= round %></title>
+  <link rel="stylesheet" href="/styles.css" />
+  <style>
+    @media print {
+      .no-print { display: none; }
+      body { padding: 0; margin: 0; }
+      .slip { page-break-inside: avoid; }
+    }
+    body { font-family: system-ui, sans-serif; padding: 24px; }
+    .slip { max-width: 720px; margin: 0 auto; border: 2px solid #222; padding: 24px; }
+    .slip h1 { margin-top: 0; }
+    .slip table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    .slip th, .slip td { border: 1px solid #444; padding: 6px 10px; text-align: left; }
+    .meta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+    .meta div { background: #f3f3f3; padding: 6px 10px; }
+    .signlines { margin-top: 48px; display: flex; justify-content: space-between; gap: 64px; }
+    .signlines div { flex: 1; border-top: 1px solid #222; padding-top: 4px; text-align: center; font-size: 0.9em; }
+  </style>
+</head>
+<body>
+  <div class="no-print" style="text-align:right; max-width:720px; margin:0 auto 12px;">
+    <button onclick="window.print()">Print / Save as PDF</button>
+  </div>
+  <div class="slip">
+    <h1>Sports Stacking Competition</h1>
+    <h2><%= round === 'final' ? 'Final Round Result Slip' : 'Qualifying Round Result Slip' %></h2>
+    <div class="meta">
+      <div><strong>Category:</strong> <%= categoryName %></div>
+      <div><strong>Discipline:</strong> <%= disciplineName %></div>
+      <div><strong>Round:</strong> <%= round === 'final' ? 'Final' : 'Qualifying' %></div>
+      <div><strong>Showing:</strong> Top <%= limit %></div>
+    </div>
+
+    <% if (!top.length) { %>
+      <p>No qualifying results recorded.</p>
+    <% } else { %>
+      <table>
+        <thead><tr>
+          <th>Rank</th><th>Bib</th><th>Name</th><th>School</th><th>Best Time</th><th>Status</th>
+        </tr></thead>
+        <tbody>
+          <% top.forEach(r => {
+               let label = '';
+               if (round === 'final' && r.rank === 1) label = 'Champion';
+               else if (round === 'final' && r.rank === 2) label = '1st Runner-Up';
+               else if (round === 'final' && r.rank === 3) label = '2nd Runner-Up';
+               else if (round === 'qualifying') label = 'Qualified for Final';
+          %>
+            <tr>
+              <td><%= r.rank %></td>
+              <td><%= r.bib_no || '' %></td>
+              <td><%= r.full_name %></td>
+              <td><%= r.school || '' %></td>
+              <td><strong><%= formatMs(r.best_ms) %></strong></td>
+              <td><%= label %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+
+    <div class="signlines">
+      <div>Recorder</div>
+      <div>Chief Judge</div>
+    </div>
+  </div>
+</body>
+</html>

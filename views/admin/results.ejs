@@ -1,0 +1,49 @@
+<%- include('../partials/header') %>
+<h1>Results &amp; Rankings</h1>
+<%- include('../partials/filter-form') %>
+
+<% if (have) { %>
+  <h2><%= categoryName %> &middot; <%= disciplineName %> &middot; <%= round === 'final' ? 'Final Round' : 'Qualifying Round' %></h2>
+
+  <div class="actions">
+    <a class="btn" href="/admin/slip?category_id=<%= categoryId %>&discipline_id=<%= disciplineId %>&round=<%= round %>" target="_blank">Print Slip</a>
+    <a class="btn" href="/admin/export.xlsx?category_id=<%= categoryId %>&discipline_id=<%= disciplineId %>&round=<%= round %>">Export Excel</a>
+  </div>
+
+  <% if (!rows.length) { %>
+    <p>No timings recorded yet.</p>
+  <% } else { %>
+    <table class="results">
+      <thead><tr>
+        <th>Rank</th><th>Bib</th><th>Name</th><th>Gender</th><th>School</th>
+        <th>A1</th><th>A2</th><th>A3</th><th>Best</th><th></th>
+      </tr></thead>
+      <tbody>
+        <% rows.forEach(r => {
+             let cls = '';
+             let label = '';
+             if (round === 'final' && r.rank === 1) { cls = 'gold';   label = 'Champion'; }
+             else if (round === 'final' && r.rank === 2) { cls = 'silver'; label = '1st Runner-Up'; }
+             else if (round === 'final' && r.rank === 3) { cls = 'bronze'; label = '2nd Runner-Up'; }
+             else if (round === 'qualifying' && r.rank && r.rank <= 5) { cls = 'qualified'; label = 'Finalist'; }
+        %>
+          <tr class="<%= cls %>">
+            <td><%= r.rank ?? 'DNF' %></td>
+            <td><%= r.bib_no || '' %></td>
+            <td><%= r.full_name %></td>
+            <td><%= r.gender || '' %></td>
+            <td><%= r.school || '' %></td>
+            <td><%= formatMs(r.attempts[0]) %></td>
+            <td><%= formatMs(r.attempts[1]) %></td>
+            <td><%= formatMs(r.attempts[2]) %></td>
+            <td><strong><%= formatMs(r.best_ms) %></strong></td>
+            <td><%= label %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+<% } else { %>
+  <p>Pick a category, discipline, and round.</p>
+<% } %>
+<%- include('../partials/footer') %>

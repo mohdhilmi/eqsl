@@ -1,0 +1,31 @@
+<%- include('partials/header') %>
+<h1>Participant Registration</h1>
+<% if (error) { %><div class="flash error"><%= error %></div><% } %>
+<form method="post" action="/register" class="form">
+  <label>Full Name *
+    <input name="full_name" required value="<%= values.full_name || '' %>">
+  </label>
+  <label>Bib Number
+    <input name="bib_no" value="<%= values.bib_no || '' %>">
+  </label>
+  <label>Gender
+    <select name="gender">
+      <option value="">--</option>
+      <option value="L" <%= values.gender === 'L' ? 'selected' : '' %>>L (Male)</option>
+      <option value="P" <%= values.gender === 'P' ? 'selected' : '' %>>P (Female)</option>
+    </select>
+  </label>
+  <label>School
+    <input name="school" value="<%= values.school || '' %>">
+  </label>
+  <label>Category *
+    <select name="category_id" required>
+      <option value="">-- choose category --</option>
+      <% categories.forEach(c => { %>
+        <option value="<%= c.id %>" <%= String(values.category_id) == String(c.id) ? 'selected' : '' %>><%= c.name %></option>
+      <% }) %>
+    </select>
+  </label>
+  <button class="btn primary" type="submit">Register</button>
+</form>
+<%- include('partials/footer') %>

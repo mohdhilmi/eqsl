@@ -177,7 +177,7 @@ router.post('/timings', (req, res) => {
   const disciplineId = Number(req.body.discipline_id);
   const round = req.body.round === 'final' ? 'final' : 'qualifying';
   const categoryId = Number(req.body.category_id);
-  const times = req.body.times || {}; // { participantId: { '1': '12.34', ... } }
+  const times = req.body.times || {}; // { 'p<id>': { 'a<n>': '00:00:00' } }
 
   const upsert = db.prepare(
     `INSERT INTO attempts (participant_id, discipline_id, round, attempt_no, time_ms, updated_at)
@@ -187,10 +187,16 @@ router.post('/timings', (req, res) => {
   );
 
   const tx = db.transaction(() => {
-    for (const [pid, attempts] of Object.entries(times)) {
-      for (const [n, raw] of Object.entries(attempts)) {
+    for (const [pidKey, attempts] of Object.entries(times)) {
+      const participantId = Number(String(pidKey).replace(/^p/, ''));
+      if (!Number.isInteger(participantId) || participantId <= 0) continue;
+      for (const [nKey, raw] of Object.entries(attempts || {})) {
+        const attemptNo = Number(String(nKey).replace(/^a/, ''));
+        if (!Number.isInteger(attemptNo) || attemptNo < 1 || attemptNo > 3) {
+          continue;
+        }
         const ms = parseTimeInput(raw);
-        upsert.run(Number(pid), disciplineId, round, Number(n), ms);
+        upsert.run(participantId, disciplineId, round, attemptNo, ms);
       }
     }
   });
